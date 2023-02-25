@@ -46,6 +46,9 @@ func _physics_process(delta):
 		playerState = state.STAND
 		GlobalVariables.deathTimer = -1
 	
+	if GlobalVariables.deathTimer == 0:
+			playerState = state.DEAD
+			print("DEAD")
 	if playerState == state.DEAD:
 		return
 	
@@ -80,9 +83,6 @@ func _physics_process(delta):
 		direction = Vector3.ZERO
 		if GlobalVariables.deathTimer > 0:
 			GlobalVariables.deathTimer = max(GlobalVariables.deathTimer - GlobalVariables.deathTimerStatDec, 0)
-		if GlobalVariables.deathTimer == 0:
-			playerState = state.DEAD
-			print("DEAD")
 		
 	elif playerState == state.RUN:
 		direction = directionalInput.normalized()
