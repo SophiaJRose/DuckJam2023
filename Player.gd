@@ -18,7 +18,8 @@ var direction = Vector3.ZERO
 enum state {
 	STAND,
 	RUN,
-	JUMP
+	JUMP,
+	DEAD
 }
 var playerState = state.STAND
 signal orbCollected
@@ -27,7 +28,7 @@ func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _input(event):
-	if event is InputEventMouseMotion:
+	if event is InputEventMouseMotion and playerState != state.DEAD:
 		var mouse_axis = event.relative / 1000 * 3
 		rot.y -= mouse_axis.x
 		rot.x = clamp(rot.x - mouse_axis.y, -PI/2, PI/2)
@@ -39,6 +40,14 @@ func _physics_process(delta):
 	# Easy reset
 	if Input.is_action_pressed("restart"):
 		translation = Vector3.ZERO
+		rot = Vector3.ZERO
+		rotation = Vector3.ZERO
+		camera.rotation = Vector3.ZERO
+		playerState = state.STAND
+		GlobalVariables.deathTimer = -1
+	
+	if playerState == state.DEAD:
+		return
 	
 	# Get Input and Determine State
 	directionalInput = Vector3.ZERO
@@ -69,12 +78,22 @@ func _physics_process(delta):
 	if playerState == state.STAND:
 		velocity = Vector3(0, velocity.y - fall_acceleration * delta, 0)
 		direction = Vector3.ZERO
+		if GlobalVariables.deathTimer > 0:
+			GlobalVariables.deathTimer = max(GlobalVariables.deathTimer - GlobalVariables.deathTimerStatDec, 0)
+		if GlobalVariables.deathTimer == 0:
+			playerState = state.DEAD
+			print("DEAD")
+		
 	elif playerState == state.RUN:
 		direction = directionalInput.normalized()
 		speed = clamp(speed + runAcceleration, 0, normalRunSpeed)
 		velocity.z = speed * (direction.x * sin(rotation.y + PI) + direction.z * cos(rotation.y + PI))
 		velocity.x = speed * (direction.x * sin(rotation.y + (PI/2)) + direction.z * cos(rotation.y + (PI/2)))
 		velocity.y -= fall_acceleration * delta
+		if GlobalVariables.deathTimer == -1:
+			GlobalVariables.deathTimer = GlobalVariables.deathTimerMax
+		else:
+			GlobalVariables.deathTimer = max(GlobalVariables.deathTimer - GlobalVariables.deathTimerMoveDec, 0)
 	elif playerState == state.JUMP:
 		if beginJump:
 			velocity.y = 25
@@ -93,9 +112,13 @@ func _physics_process(delta):
 		velocity.x = speed * (direction.x * sin(rotation.y + (PI/2)) + direction.z * cos(rotation.y + (PI/2)))
 		# Vertical velocity
 		velocity.y -= fall_acceleration * delta
+		if GlobalVariables.deathTimer == -1:
+			GlobalVariables.deathTimer = GlobalVariables.deathTimerMax
+		else:
+			GlobalVariables.deathTimer = max(GlobalVariables.deathTimer - GlobalVariables.deathTimerMoveDec, 0)
 		
 	# Debug text
-#	print("directionalInput:" + String(directionalInput) + "\ndirection:" + String(direction) + "\nbeginJump:" + String(beginJump))
+#	print("directionalInput:" + str(directionalInput) + "\ndirection:" + str(direction) + "\nbeginJump:" + str(beginJump))
 
 	# Check for orb collisions, then move
 	var collision = move_and_collide(velocity * delta, true, true, true)

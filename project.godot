@@ -24,6 +24,10 @@ config/name="DuckJam2023"
 run/main_scene="res://Main.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+GlobalVariables="*res://GlobalVariables.tscn"
+
 [editor]
 
 version_control_autoload_on_startup=true
