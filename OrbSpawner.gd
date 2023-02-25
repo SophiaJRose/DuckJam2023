@@ -14,7 +14,7 @@ func _ready():
 	randomize()
 	position = randi() % spawnPositions.size()
 	orb.translation = spawnPositions[position]
-	print("Orb spawned at " + String(orb.translation))
+	print("Orb spawned at " + str(orb.translation))
 
 func _process(delta):
 	if spawnTimer >= 0:
@@ -26,9 +26,10 @@ func _process(delta):
 			newPosition = randi() % spawnPositions.size()
 		position = newPosition
 		orb.translation = spawnPositions[position]
-		print("Orb spawned at " + String(orb.translation))
+		print("Orb spawned at " + str(orb.translation))
 
 func _on_Player_orbCollected():
 	orb.collision_layer = 0
 	orb.translation = Vector3(0, -10, 0)
-	spawnTimer = 5
+	GlobalVariables.deathTimer = min(GlobalVariables.deathTimer + 600, 3000)
+	spawnTimer = 60
