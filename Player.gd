@@ -14,7 +14,6 @@ var directionalInput = Vector3.ZERO
 var beginJump = false
 
 var direction = Vector3.ZERO
-var jumpDirection = Vector3.ZERO
 
 enum state {
 	STAND,
@@ -65,7 +64,7 @@ func _physics_process(delta):
 	if Input.is_action_pressed("jump") and is_on_floor():
 		beginJump = true
 		playerState = state.JUMP
-		jumpDirection = direction
+		direction = directionalInput.normalized()
 	
 	if playerState == state.STAND:
 		velocity = Vector3(0, velocity.y - fall_acceleration * delta, 0)
@@ -80,23 +79,23 @@ func _physics_process(delta):
 		if beginJump:
 			velocity.y = 25
 		# Halt air movement by pressing opposite direction
-		if directionalInput.z * jumpDirection.z < 0:
-			jumpDirection.z = 0.3 * directionalInput.z
-		elif directionalInput.z * jumpDirection.z == 0 and directionalInput.z != 0:
-			jumpDirection.z = 0.5 * directionalInput.z
-		if directionalInput.x * jumpDirection.x < 0:
-			jumpDirection.x = 0.3 * directionalInput.x
-		elif directionalInput.x * jumpDirection.x == 0 and directionalInput.x != 0:
-			jumpDirection.x = 0.5 * directionalInput.x
+		if directionalInput.z * direction.z < 0:
+			direction.z = 0.3 * directionalInput.z
+		elif directionalInput.z * direction.z == 0 and directionalInput.z != 0:
+			direction.z = 0.5 * directionalInput.z
+		if directionalInput.x * direction.x < 0:
+			direction.x = 0.3 * directionalInput.x
+		elif directionalInput.x * direction.x == 0 and directionalInput.x != 0:
+			direction.x = 0.5 * directionalInput.x
 			
 		# Ground velocity
-		velocity.z = speed * (jumpDirection.x * sin(rotation.y + PI) + jumpDirection.z * cos(rotation.y + PI))
-		velocity.x = speed * (jumpDirection.x * sin(rotation.y + (PI/2)) + jumpDirection.z * cos(rotation.y + (PI/2)))
+		velocity.z = speed * (direction.x * sin(rotation.y + PI) + direction.z * cos(rotation.y + PI))
+		velocity.x = speed * (direction.x * sin(rotation.y + (PI/2)) + direction.z * cos(rotation.y + (PI/2)))
 		# Vertical velocity
 		velocity.y -= fall_acceleration * delta
 		
 	# Debug text
-#	print("directionalInput:" + String(directionalInput) + "\ndirection:" + String(direction) + "\njumpDirection:" + String(jumpDirection) + "\nbeginJump:" + String(beginJump))
+#	print("directionalInput:" + String(directionalInput) + "\ndirection:" + String(direction) + "\nbeginJump:" + String(beginJump))
 
 	# Check for orb collisions, then move
 	var collision = move_and_collide(velocity * delta, true, true, true)
