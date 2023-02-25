@@ -1,13 +1,28 @@
 extends KinematicBody
 
-export var speed = 14
+export var normalRunSpeed = 20
+export var runAcceleration = 3
 
 export var fall_acceleration = 75
 
 onready var camera = get_node("Camera")
 
 var velocity = Vector3.ZERO
+var speed = 0
 var rot = Vector3.ZERO
+var directionalInput = Vector3.ZERO
+var beginJump = false
+
+var direction = Vector3.ZERO
+var jumpDirection = Vector3.ZERO
+
+enum state {
+	STAND,
+	RUN,
+	JUMP
+}
+var playerState = state.STAND
+signal orbCollected
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -22,30 +37,69 @@ func _input(event):
 		rotation.y = rot.y
 
 func _physics_process(delta):
-	# We create a local variable to store the input direction
-	var direction = Vector3.ZERO
+	# Easy reset
+	if Input.is_action_pressed("restart"):
+		translation = Vector3.ZERO
 	
-	# We check for each move input and update the direction accordingly.
+	# Get Input and Determine State
+	directionalInput = Vector3.ZERO
+	beginJump = false
+	if is_on_floor():
+		playerState = state.STAND
 	if Input.is_action_pressed("strafe_right"):
-		direction.x += 1
+		directionalInput.x += 1
+		if playerState == state.STAND:
+			playerState = state.RUN
 	if Input.is_action_pressed("strafe_left"):
-		direction.x -= 1
+		directionalInput.x -= 1
+		if playerState == state.STAND:
+			playerState = state.RUN
 	if Input.is_action_pressed("move_forward"):
-		direction.z += 1
+		directionalInput.z += 1
+		if playerState == state.STAND:
+			playerState = state.RUN
 	if Input.is_action_pressed("move_backward"):
-		direction.z -= 1
+		directionalInput.z -= 1
+		if playerState == state.STAND:
+			playerState = state.RUN
 	if Input.is_action_pressed("jump") and is_on_floor():
-		velocity.y += 25
+		beginJump = true
+		playerState = state.JUMP
+		jumpDirection = direction
 	
-	if direction != Vector3.ZERO:
-		direction = direction.normalized()
+	if playerState == state.STAND:
+		velocity = Vector3(0, velocity.y - fall_acceleration * delta, 0)
+		direction = Vector3.ZERO
+	elif playerState == state.RUN:
+		direction = directionalInput.normalized()
+		speed = clamp(speed + runAcceleration, 0, normalRunSpeed)
+		velocity.z = speed * (direction.x * sin(rotation.y + PI) + direction.z * cos(rotation.y + PI))
+		velocity.x = speed * (direction.x * sin(rotation.y + (PI/2)) + direction.z * cos(rotation.y + (PI/2)))
+		velocity.y -= fall_acceleration * delta
+	elif playerState == state.JUMP:
+		if beginJump:
+			velocity.y = 25
+		# Halt air movement by pressing opposite direction
+		if directionalInput.z * jumpDirection.z < 0:
+			jumpDirection.z = 0.3 * directionalInput.z
+		elif directionalInput.z * jumpDirection.z == 0 and directionalInput.z != 0:
+			jumpDirection.z = 0.5 * directionalInput.z
+		if directionalInput.x * jumpDirection.x < 0:
+			jumpDirection.x = 0.3 * directionalInput.x
+		elif directionalInput.x * jumpDirection.x == 0 and directionalInput.x != 0:
+			jumpDirection.x = 0.5 * directionalInput.x
+			
+		# Ground velocity
+		velocity.z = speed * (jumpDirection.x * sin(rotation.y + PI) + jumpDirection.z * cos(rotation.y + PI))
+		velocity.x = speed * (jumpDirection.x * sin(rotation.y + (PI/2)) + jumpDirection.z * cos(rotation.y + (PI/2)))
+		# Vertical velocity
+		velocity.y -= fall_acceleration * delta
 		
-	# Ground velocity
-	velocity.z = speed * (direction.x * sin(rotation.y + PI) + direction.z * cos(rotation.y + PI))
-	velocity.x = speed * (direction.x * sin(rotation.y + (PI/2)) + direction.z * cos(rotation.y + (PI/2)))
-#	velocity.x = direction.x * speed * sin(rotation.y)
-#	velocity.z = direction.z * speed * sin(rotation.y)
-	# Vertical velocity
-	velocity.y -= fall_acceleration * delta
-	# Move the character
+	# Debug text
+#	print("directionalInput:" + String(directionalInput) + "\ndirection:" + String(direction) + "\njumpDirection:" + String(jumpDirection) + "\nbeginJump:" + String(beginJump))
+
+	# Check for orb collisions, then move
+	var collision = move_and_collide(velocity * delta, true, true, true)
+	if collision != null and collision.collider.is_in_group("Orb"):
+		emit_signal("orbCollected")
 	velocity = move_and_slide(velocity, Vector3.UP)
