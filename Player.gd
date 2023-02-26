@@ -48,7 +48,6 @@ func _physics_process(delta):
 	
 	if GlobalVariables.deathTimer == 0:
 			playerState = state.DEAD
-			print("DEAD")
 	if playerState == state.DEAD:
 		return
 	
