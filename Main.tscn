@@ -1,4 +1,4 @@
-[gd_scene load_steps=63 format=2]
+[gd_scene load_steps=65 format=2]
 
 [ext_resource path="res://Player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Checkboard.png" type="Texture" id=2]
@@ -269,6 +269,15 @@ panorama = ExtResource( 6 )
 background_mode = 2
 background_sky = SubResource( 59 )
 
+[sub_resource type="SpatialMaterial" id=60]
+flags_transparent = true
+albedo_color = Color( 1, 1, 1, 0.25098 )
+
+[sub_resource type="SphereMesh" id=61]
+material = SubResource( 60 )
+radius = 0.2
+height = 0.4
+
 [node name="Main" type="Node"]
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
@@ -494,5 +503,27 @@ mesh = SubResource( 50 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 58 )
+
+[node name="OrbMarkers" type="StaticBody" parent="."]
+
+[node name="BridgeUpper" type="MeshInstance" parent="OrbMarkers"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 5.5, -18 )
+mesh = SubResource( 61 )
+
+[node name="BridgeLower" type="MeshInstance" parent="OrbMarkers"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -14, -2.5, -18 )
+mesh = SubResource( 61 )
+
+[node name="Pedestal" type="MeshInstance" parent="OrbMarkers"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 4.5, 18 )
+mesh = SubResource( 61 )
+
+[node name="Ledge" type="MeshInstance" parent="OrbMarkers"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 13.5, 4 )
+mesh = SubResource( 61 )
+
+[node name="Tower" type="MeshInstance" parent="OrbMarkers"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 9.5, -12 )
+mesh = SubResource( 61 )
 
 [connection signal="orbCollected" from="Player" to="OrbSpawner" method="_on_Player_orbCollected"]
