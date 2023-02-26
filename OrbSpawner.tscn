@@ -6,7 +6,8 @@
 radius = 0.4
 
 [sub_resource type="SpatialMaterial" id=3]
-albedo_color = Color( 1, 1, 1, 0.501961 )
+albedo_color = Color( 0.811765, 0.74902, 0.227451, 1 )
+metallic = 0.5
 
 [sub_resource type="SphereMesh" id=2]
 material = SubResource( 3 )
@@ -25,5 +26,3 @@ shape = SubResource( 1 )
 
 [node name="MeshInstance" type="MeshInstance" parent="Orb"]
 mesh = SubResource( 2 )
-
-[node name="OmniLight" type="OmniLight" parent="Orb"]

@@ -1,6 +1,6 @@
 extends KinematicBody
 
-export var normalRunSpeed = 20
+export var normalRunSpeed = 18
 export var runAcceleration = 3
 
 export var fall_acceleration = 75
