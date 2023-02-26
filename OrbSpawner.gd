@@ -1,10 +1,16 @@
 extends Node
 
 export var spawnPositions = [
-	Vector3(15, 1.5, 15),
-	Vector3(-15, 1.5, 15),
-	Vector3(-15, 1.5, -15),
-	Vector3(15, 1.5, -15)
+	Vector3(4, 4.5, 18),
+	Vector3(-14, 5.5, -18),
+	Vector3(-14, -2.5, -18),
+	Vector3(16, 9.5, -12)
+]
+export var orbHealValues = [
+	600,
+	600,
+	600,
+	1500
 ]
 onready var orb = get_node("Orb")
 var position = -1
@@ -16,7 +22,7 @@ func _ready():
 	orb.translation = spawnPositions[position]
 	print("Orb spawned at " + str(orb.translation))
 
-func _process(delta):
+func _process(_delta):
 	if spawnTimer >= 0:
 		spawnTimer -= 1
 	if spawnTimer == 0:
@@ -31,5 +37,5 @@ func _process(delta):
 func _on_Player_orbCollected():
 	orb.collision_layer = 0
 	orb.translation = Vector3(0, -10, 0)
-	GlobalVariables.deathTimer = min(GlobalVariables.deathTimer + 600, 3000)
+	GlobalVariables.deathTimer = min(GlobalVariables.deathTimer + orbHealValues[position], 3000)
 	spawnTimer = 60

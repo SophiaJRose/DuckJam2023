@@ -124,4 +124,4 @@ func _physics_process(delta):
 	var collision = move_and_collide(velocity * delta, true, true, true)
 	if collision != null and collision.collider.is_in_group("Orb"):
 		emit_signal("orbCollected")
-	velocity = move_and_slide(velocity, Vector3.UP)
+	velocity = move_and_slide_with_snap(velocity, Vector3.ZERO if beginJump else Vector3.DOWN, Vector3.UP, true)
