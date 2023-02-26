@@ -1,7 +1,7 @@
 extends Node
 
 export var spawnPositions = [
-	Vector3(4, 4.5, 18),
+	Vector3(6, 4.5, 18),
 	Vector3(-14, 5.5, -18),
 	Vector3(-14, -2.5, -18),
 	Vector3(16, 9.5, -12),
