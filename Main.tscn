@@ -504,7 +504,7 @@ mesh = SubResource( 50 )
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 58 )
 
-[node name="OrbMarkers" type="StaticBody" parent="."]
+[node name="OrbMarkers" type="Node" parent="."]
 
 [node name="BridgeUpper" type="MeshInstance" parent="OrbMarkers"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 5.5, -18 )

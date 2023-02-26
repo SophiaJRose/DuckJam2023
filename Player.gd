@@ -46,9 +46,11 @@ func _physics_process(delta):
 		playerState = state.STAND
 		GlobalVariables.deathTimer = -1
 		GlobalVariables.survivalTimer = 0
+		GlobalVariables.retryText = ""
 	
 	if GlobalVariables.deathTimer == 0:
 		playerState = state.DEAD
+		GlobalVariables.retryText = "Press R to Restart"
 	if playerState == state.DEAD:
 		return
 	
@@ -112,9 +114,6 @@ func _physics_process(delta):
 			GlobalVariables.survivalTimer += 1
 		else:
 			GlobalVariables.deathTimer = max(GlobalVariables.deathTimer - GlobalVariables.deathTimerMoveDec, 0)
-		
-	# Debug text
-#	print("directionalInput:" + str(directionalInput) + "\ndirection:" + str(direction) + "\nbeginJump:" + str(beginJump))
 
 	# Check for orb collisions, then move
 	var collision = move_and_collide(velocity * delta, true, true, true)

@@ -15,9 +15,15 @@ margin_right = 980.0
 margin_bottom = 560.0
 alignment = 2
 
-[node name="TimerLabel" type="Label" parent="VBoxContainer"]
+[node name="RetryLabel" type="Label" parent="VBoxContainer"]
+margin_top = 504.0
 margin_right = 980.0
-margin_bottom = 14.0
+margin_bottom = 518.0
+
+[node name="TimerLabel" type="Label" parent="VBoxContainer"]
+margin_top = 522.0
+margin_right = 980.0
+margin_bottom = 536.0
 align = 2
 
 [node name="TimerBarBG" type="ColorRect" parent="VBoxContainer"]
