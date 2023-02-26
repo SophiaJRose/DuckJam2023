@@ -39,5 +39,5 @@ func _process(_delta):
 func _on_Player_orbCollected():
 	orb.collision_layer = 0
 	orb.translation = Vector3(0, -10, 0)
-	GlobalVariables.deathTimer = min(GlobalVariables.deathTimer + orbHealValues[position], 3000)
+	GlobalVariables.deathTimer = min(GlobalVariables.deathTimer + orbHealValues[position], GlobalVariables.deathTimerMax)
 	spawnTimer = 15

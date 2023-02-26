@@ -45,9 +45,10 @@ func _physics_process(delta):
 		camera.rotation = Vector3.ZERO
 		playerState = state.STAND
 		GlobalVariables.deathTimer = -1
+		GlobalVariables.survivalTimer = 0
 	
 	if GlobalVariables.deathTimer == 0:
-			playerState = state.DEAD
+		playerState = state.DEAD
 	if playerState == state.DEAD:
 		return
 	
@@ -58,20 +59,14 @@ func _physics_process(delta):
 		playerState = state.STAND
 	if Input.is_action_pressed("strafe_right"):
 		directionalInput.x += 1
-		if playerState == state.STAND:
-			playerState = state.RUN
 	if Input.is_action_pressed("strafe_left"):
 		directionalInput.x -= 1
-		if playerState == state.STAND:
-			playerState = state.RUN
 	if Input.is_action_pressed("move_forward"):
 		directionalInput.z += 1
-		if playerState == state.STAND:
-			playerState = state.RUN
 	if Input.is_action_pressed("move_backward"):
 		directionalInput.z -= 1
-		if playerState == state.STAND:
-			playerState = state.RUN
+	if playerState == state.STAND and directionalInput != Vector3.ZERO:
+		playerState = state.RUN
 	if Input.is_action_pressed("jump") and is_on_floor():
 		beginJump = true
 		playerState = state.JUMP
@@ -91,6 +86,7 @@ func _physics_process(delta):
 		velocity.y -= fall_acceleration * delta
 		if GlobalVariables.deathTimer == -1:
 			GlobalVariables.deathTimer = GlobalVariables.deathTimerMax
+			GlobalVariables.survivalTimer += 1
 		else:
 			GlobalVariables.deathTimer = max(GlobalVariables.deathTimer - GlobalVariables.deathTimerMoveDec, 0)
 	elif playerState == state.JUMP:
@@ -113,6 +109,7 @@ func _physics_process(delta):
 		velocity.y -= fall_acceleration * delta
 		if GlobalVariables.deathTimer == -1:
 			GlobalVariables.deathTimer = GlobalVariables.deathTimerMax
+			GlobalVariables.survivalTimer += 1
 		else:
 			GlobalVariables.deathTimer = max(GlobalVariables.deathTimer - GlobalVariables.deathTimerMoveDec, 0)
 		
@@ -124,3 +121,6 @@ func _physics_process(delta):
 	if collision != null and collision.collider.is_in_group("Orb"):
 		emit_signal("orbCollected")
 	velocity = move_and_slide_with_snap(velocity, Vector3.ZERO if beginJump else Vector3.DOWN, Vector3.UP, true)
+	
+	if GlobalVariables.survivalTimer > 0:
+		GlobalVariables.survivalTimer += 1
