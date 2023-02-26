@@ -4,13 +4,15 @@ export var spawnPositions = [
 	Vector3(4, 4.5, 18),
 	Vector3(-14, 5.5, -18),
 	Vector3(-14, -2.5, -18),
-	Vector3(16, 9.5, -12)
+	Vector3(16, 9.5, -12),
+	Vector3(-20, 13.5, 4)
 ]
 export var orbHealValues = [
 	600,
 	600,
 	600,
-	1500
+	1500,
+	900
 ]
 onready var orb = get_node("Orb")
 var position = -1
