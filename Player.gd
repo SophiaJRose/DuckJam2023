@@ -7,7 +7,6 @@ extends CharacterBody3D
 
 @onready var camera = get_node("Camera3D")
 
-var velocity = Vector3.ZERO
 var speed = 0
 var rot = Vector3.ZERO
 var directionalInput = Vector3.ZERO
@@ -26,6 +25,9 @@ signal orbCollected
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	set_up_direction(Vector3.UP)
+	set_floor_stop_on_slope_enabled(true)
+	set_floor_snap_length(1.0)
 
 func _input(event):
 	if event is InputEventMouseMotion and playerState != state.DEAD:
@@ -47,10 +49,15 @@ func _physics_process(delta):
 		GlobalVariables.deathTimer = -1
 		GlobalVariables.survivalTimer = 0
 		GlobalVariables.retryText = ""
+		
+	# Quit
+	if Input.is_action_pressed("quit"):
+		get_tree().root.propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)
+		get_tree().quit()
 	
 	if GlobalVariables.deathTimer == 0:
 		playerState = state.DEAD
-		GlobalVariables.retryText = "Press R to Restart"
+		GlobalVariables.retryText = "Press R to restart or Esc to quit"
 	if playerState == state.DEAD:
 		return
 	
@@ -117,14 +124,9 @@ func _physics_process(delta):
 
 	# Check for orb collisions, then move
 	var collision = move_and_collide(velocity * delta, true, true, true)
-	if collision != null and collision.collider.is_in_group("Orb"):
+	if collision != null and collision.get_collider().is_in_group("Orb"):
 		emit_signal("orbCollected")
-	set_velocity(velocity)
-	# TODOConverter3To4 looks that snap in Godot 4 is float, not vector like in Godot 3 - previous value `Vector3.ZERO if beginJump else Vector3.DOWN`
-	set_up_direction(Vector3.UP)
-	set_floor_stop_on_slope_enabled(true)
 	move_and_slide()
-	velocity = velocity
 	
 	if GlobalVariables.survivalTimer > 0:
 		GlobalVariables.survivalTimer += 1
