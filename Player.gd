@@ -1,11 +1,11 @@
-extends KinematicBody
+extends CharacterBody3D
 
-export var normalRunSpeed = 18
-export var runAcceleration = 3
+@export var normalRunSpeed = 18
+@export var runAcceleration = 3
 
-export var fall_acceleration = 75
+@export var fall_acceleration = 75
 
-onready var camera = get_node("Camera")
+@onready var camera = get_node("Camera3D")
 
 var velocity = Vector3.ZERO
 var speed = 0
@@ -39,7 +39,7 @@ func _input(event):
 func _physics_process(delta):
 	# Easy reset
 	if Input.is_action_pressed("restart"):
-		translation = Vector3.ZERO
+		position = Vector3.ZERO
 		rot = Vector3.ZERO
 		rotation = Vector3.ZERO
 		camera.rotation = Vector3.ZERO
@@ -119,7 +119,12 @@ func _physics_process(delta):
 	var collision = move_and_collide(velocity * delta, true, true, true)
 	if collision != null and collision.collider.is_in_group("Orb"):
 		emit_signal("orbCollected")
-	velocity = move_and_slide_with_snap(velocity, Vector3.ZERO if beginJump else Vector3.DOWN, Vector3.UP, true)
+	set_velocity(velocity)
+	# TODOConverter3To4 looks that snap in Godot 4 is float, not vector like in Godot 3 - previous value `Vector3.ZERO if beginJump else Vector3.DOWN`
+	set_up_direction(Vector3.UP)
+	set_floor_stop_on_slope_enabled(true)
+	move_and_slide()
+	velocity = velocity
 	
 	if GlobalVariables.survivalTimer > 0:
 		GlobalVariables.survivalTimer += 1

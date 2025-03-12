@@ -2,10 +2,10 @@
 
 [ext_resource path="res://OrbSpawner.gd" type="Script" id=1]
 
-[sub_resource type="SphereShape" id=1]
+[sub_resource type="SphereShape3D" id=1]
 radius = 0.4
 
-[sub_resource type="SpatialMaterial" id=3]
+[sub_resource type="StandardMaterial3D" id=3]
 albedo_color = Color( 0.811765, 0.74902, 0.227451, 1 )
 metallic = 0.5
 
@@ -17,12 +17,12 @@ height = 0.8
 [node name="OrbSpawner" type="Node"]
 script = ExtResource( 1 )
 
-[node name="Orb" type="StaticBody" parent="." groups=["Orb"]]
+[node name="Orb" type="StaticBody3D" parent="." groups=["Orb"]]
 collision_layer = 4
 collision_mask = 0
 
-[node name="CollisionShape" type="CollisionShape" parent="Orb"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Orb"]
 shape = SubResource( 1 )
 
-[node name="MeshInstance" type="MeshInstance" parent="Orb"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Orb"]
 mesh = SubResource( 2 )

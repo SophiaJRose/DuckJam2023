@@ -13,14 +13,14 @@ var colours = [
 ]
 var usedColours = []
 
-onready var groundNodes = get_tree().get_nodes_in_group("Ground")
-onready var pedestalNodes = get_tree().get_nodes_in_group("Pedestal")
-onready var bridgeNodes = get_tree().get_nodes_in_group("Bridge")
-onready var towerNodes = get_tree().get_nodes_in_group("Tower")
-onready var wallNodes = get_tree().get_nodes_in_group("Wall")
-onready var ledgeNodes = get_tree().get_nodes_in_group("Ledge")
+@onready var groundNodes = get_tree().get_nodes_in_group("Ground")
+@onready var pedestalNodes = get_tree().get_nodes_in_group("Pedestal")
+@onready var bridgeNodes = get_tree().get_nodes_in_group("Bridge")
+@onready var towerNodes = get_tree().get_nodes_in_group("Tower")
+@onready var wallNodes = get_tree().get_nodes_in_group("Wall")
+@onready var ledgeNodes = get_tree().get_nodes_in_group("Ledge")
 
-onready var allNodes = [
+@onready var allNodes = [
 	groundNodes,
 	pedestalNodes,
 	bridgeNodes,
@@ -39,9 +39,9 @@ func _ready():
 		var colour = colours[colourIndex]
 		for node in nodeSet:
 			var material
-			if node is MeshInstance:
+			if node is MeshInstance3D:
 				material = node.get_active_material(0)
 			else:
 				material = node.get_material()
-			if material is SpatialMaterial:
+			if material is StandardMaterial3D:
 				material.albedo_color = Color(colour)
