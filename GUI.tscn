@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://5e251ibj6mmp" path="res://GUI.gd" id="1"]
 
 [node name="GUI" type="MarginContainer"]
-anchors_preset = -1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 20.0
